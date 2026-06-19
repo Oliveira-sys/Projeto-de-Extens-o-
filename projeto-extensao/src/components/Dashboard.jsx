@@ -2,7 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import CardMetrica from './CardMetricas'; 
 
+// Adicionei a prop "isPublic" (opcional) ou podemos checar se handleMudarStatus é apenas uma função vazia
 export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge, fadeUpVariants }) {
+  
+  // Se não foi passada nenhuma lógica real de alteração, identificamos como visualização pública
+  const ehPublico = !handleMudarStatus || handleMudarStatus.toString().includes('() => {}') || handleMudarStatus.length === 0;
+
   return (
     <motion.div 
       key="dashboard" 
@@ -17,13 +22,17 @@ export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 mb-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Painel de Gestão Conectado
+            {ehPublico ? "Painel de Transparência Comunitária" : "Painel de Gestão Conectado"}
           </div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Área do Gestor Urbano</h2>
-          <p className="text-sm text-slate-500 mt-0.5">Análise de desempenho e controle das demandas comunitárias.</p>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+            {ehPublico ? "Acompanhamento Urbano" : "Área do Gestor Urbano"}
+          </h2>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {ehPublico ? "Estatísticas em tempo real das demandas do nosso bairro." : "Análise de desempenho e controle das demandas comunitárias."}
+          </p>
         </div>
         <div className="text-right bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-xs font-medium text-slate-600">
-          📅 Sessão: <span className="font-bold text-slate-800">{new Date().toLocaleDateString('pt-BR')}</span>
+          📅 Atualizado em: <span className="font-bold text-slate-800">{new Date().toLocaleDateString('pt-BR')}</span>
         </div>
       </div>
 
@@ -43,7 +52,9 @@ export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge
           <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
             <div>
               <h3 className="font-bold text-slate-900 text-base">Fila Ativa de Ocorrências</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Clique nas ações laterais para atualizar os status.</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {ehPublico ? "Lista completa de pedidos registrados pelos moradores." : "Clique nas ações laterais para atualizar os status."}
+              </p>
             </div>
             <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-semibold border border-slate-200">
               {denuncias.length} itens no total
@@ -57,13 +68,14 @@ export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge
                   <th className="py-4 px-6 w-24">ID</th>
                   <th className="py-4 px-6">Ocorrência</th>
                   <th className="py-4 px-6 w-32">Status</th>
-                  <th className="py-4 px-6 text-right w-44">Ações</th>
+                  {/* Só mostra a coluna de ações se NÃO for público */}
+                  {!ehPublico && <th className="py-4 px-6 text-right w-44">Ações</th>}
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-slate-100">
                 {denuncias.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/40 transition-colors">
-                    <td className="py-4 px-6 font-mono font-bold text-slate-400">#{item.id}</td>
+                    <td className="py-4 px-6 font-mono font-bold text-slate-400">#{item.id || item.protocolo}</td>
                     <td className="py-4 px-6">
                       <span className="font-bold text-slate-900 block">{item.titulo}</span>
                       <span className="text-xs text-slate-500 line-clamp-1 mt-0.5">{item.descricao}</span>
@@ -71,24 +83,27 @@ export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge
                     <td className="py-4 px-6">
                       <span className={getStatusBadge(item.status)}>{item.status}</span>
                     </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button 
-                          title="Atender" 
-                          onClick={() => handleMudarStatus(item.id, 'EM ANDAMENTO')} 
-                          className="px-2.5 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-all text-xs font-bold border border-blue-100"
-                        >
-                          Atender
-                        </button>
-                        <button 
-                          title="Resolver" 
-                          onClick={() => handleMudarStatus(item.id, 'RESOLVIDO')} 
-                          className="px-2.5 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-lg transition-all text-xs font-bold border border-emerald-100"
-                        >
-                          Resolver
-                        </button>
-                      </div>
-                    </td>
+                    {/* Botões ocultados se for a visualização pública */}
+                    {!ehPublico && (
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button 
+                            title="Atender" 
+                            onClick={() => handleMudarStatus(item.id, 'EM ANDAMENTO')} 
+                            className="px-2.5 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-all text-xs font-bold border border-blue-100"
+                          >
+                            Atender
+                          </button>
+                          <button 
+                            title="Resolver" 
+                            onClick={() => handleMudarStatus(item.id, 'RESOLVIDO')} 
+                            className="px-2.5 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-lg transition-all text-xs font-bold border border-emerald-100"
+                          >
+                            Resolver
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -100,16 +115,16 @@ export default function Dashboard({ denuncias, handleMudarStatus, getStatusBadge
         <div className="flex flex-col gap-6">
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
             <h3 className="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
-              <span>🚨</span> Alertas Operacionais
+              <span>🚨</span> Status dos Setores
             </h3>
             <div className="space-y-3">
-              <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-xs text-red-800">
-                <strong className="block mb-0.5">Saneamento Crítico</strong>
-                Há mais de {denuncias.filter(d => d.categoria === 'Saneamento').length} reclamações ativas nesta categoria exigindo despacho emergencial.
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700">
+                <strong className="block mb-0.5">Saneamento e Infraestrutura</strong>
+                Há {denuncias.filter(d => d.categoria === 'Saneamento').length} chamados abertos aguardando triagem pelas equipes técnicas locais.
               </div>
               <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800">
-                <strong className="block mb-0.5">Nota do Sistema</strong>
-                Todas as modificações feitas nesta tela alteram instantaneamente a visualização pública dos protocolos dos moradores.
+                <strong className="block mb-0.5">Transparência Coletiva</strong>
+                Os dados exibidos neste painel são públicos e atualizados simultaneamente conforme o andamento das frentes de trabalho.
               </div>
             </div>
           </div>
