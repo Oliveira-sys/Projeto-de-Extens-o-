@@ -5,6 +5,7 @@ import CardOcorrencia from "./components/CardOcorrencia";
 import Navbar from "./components/Navbar";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import Dashboard from "./components/Dashboard";
 
 import { 
   listarDenuncias, 
