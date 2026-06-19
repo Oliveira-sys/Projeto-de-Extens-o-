@@ -106,7 +106,7 @@ export default function App() {
       case "PENDENTE":
         return "bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded";
       case "EM ANDAMENTO":
-        return "bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded";
+return 'bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded text-center inline-flex items-center justify-center whitespace-nowrap min-w-[110px]';
       case "RESOLVIDO":
         return "bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded";
       default:

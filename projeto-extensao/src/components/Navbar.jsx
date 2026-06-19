@@ -17,7 +17,10 @@ export default function Navbar({ setTela, setProtocoloGerado, setDenunciaEncontr
         <nav className="flex items-center gap-6">
           <button onClick={() => setTela('home')} className="text-gray-600 hover:text-slate-900 font-semibold text-sm transition-colors">Home</button>
           <button onClick={() => { setTela('acompanhar'); setDenunciaEncontrada(null); }} className="text-gray-600 hover:text-slate-900 font-semibold text-sm transition-colors">Acompanhar Protocolo</button>
-          <button onClick={() => setTela('dashboard')} className="text-gray-600 hover:text-slate-900 font-semibold text-sm transition-colors flex items-center gap-1">📊 Dashboard</button>
+          
+          {/* CORRIGIDO AQUI: Alterado de 'dashboard' para 'estatisticas' */}
+          <button onClick={() => setTela('estatisticas')} className="text-gray-600 hover:text-slate-900 font-semibold text-sm transition-colors flex items-center gap-1">📊 Dashboard</button>
+          
           <button onClick={() => { setTela('criar'); setProtocoloGerado(null); }} className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-lg font-bold shadow-sm transition-colors">Fazer uma Denúncia</button>
         </nav>
       </div>
